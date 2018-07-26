@@ -1,0 +1,27 @@
+{% load tags %}
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Japanese Name</th>
+        {% for user in user_list %}
+            <th>{{ user.name }}</th>
+        {% endfor %}
+        <th>Avg</th>
+        <th>Median</th>
+    </tr>
+    {% for anime in anime_list %}
+    <tr>
+        <td>{{ anime.name }}</td>
+        <td>{{ anime.name_secondary }}</td>
+        {% for user in user_list %}
+            {% get_user_rating_for_anime user anime as rating %}
+            <td>{{ rating }}</td>
+        {% endfor %}
+        {% get_average_for_anime anime as avg %}
+        <td>{{ avg }}</td>
+        {% get_median_for_anime anime as median %}
+        <td>{{ median }}</td>
+    </tr>
+    {% endfor %}
+</table>

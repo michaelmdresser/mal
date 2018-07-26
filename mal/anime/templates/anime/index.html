@@ -1,0 +1,9 @@
+{% if anime_list %}
+    <ul>
+        {% for anime in anime_list %}
+            <li>{{ anime.name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No anime available.</p>
+{% endif %}
