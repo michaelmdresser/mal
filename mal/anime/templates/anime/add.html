@@ -1,0 +1,12 @@
+<h1>Add an anime</h1>
+
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+<form action="/anime/add/" method="post">
+    {% csrf_token %}
+    <input type="text" name="english_name" id="english_name" placeholder="English name"/>
+    <input type="text" name="japanese_name" id="japanese name" placeholder="Japanese name"/>
+    <input type="submit" value="Add" />
+
+</form>
+<a href="/anime/">Anime list</a>

@@ -1,46 +1,46 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-import django_tables2 as tables
-from django_tables2.utils import A
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 
 import os
 
-from .models import Media, Rating, User
+from .models import Anime, Rating
 
-# Create your views here.
-def index(request):
-    
-    anime_list = Media.objects.all()
-    template = loader.get_template('anime/index.html')
-    context = {
-        'anime_list': anime_list,
-    }
-    return HttpResponse(template.render(context, request))
-
-class SimpleTable(tables.Table):
-    class Meta:
-        model = Media
-        #model = Rating
-
-class AnimeTable(tables.Table):
-    name = tables.Column()
-    name_secondary = tables.Column()
-    class Meta:
-        model = Media
-
-def simple_list(request):
-    media_queryset = Media.objects.all()
-    ratings_queryset = Rating.objects.all()
-    table = SimpleTable(data=media_queryset)
-    #table = AnimeTable(queryset)
-    return render(request, 'simple_list.html', {'table': table})
-
+@login_required
 def anime_list(request):
-    template = loader.get_template('anime/anime_table.html')
-    context = {
-        'anime_list': Media.objects.all(),
-        'user_list': User.objects.all(),
-    }
+    anime_list = Anime.objects.all()
+    user_list = User.objects.all()
+    # if len(Anime.objects.all()) > 0:
+    #     anime_list = Anime.objects.all()
+    message = request.session.pop('message', None)
 
-    return HttpResponse(template.render(context, request))
+    return render(request, 'anime/anime_table.html', {'anime_list': anime_list, 'user_list': user_list, 'message': message})
+
+def anime_list_redirect(request):
+    return redirect('/anime')
+
+@login_required
+def add(request):
+    if not request.user.has_perm('anime.add_anime'):
+        request.session['message'] = "you do not have permissions to add anime"
+        return redirect('/anime')
+
+    if len(request.POST) == 0:
+        return render(request, 'anime/add.html')
+    
+    if len(request.POST['english_name']) == 0 or len(request.POST['japanese_name']) == 0:
+        return render(request, 'anime/add.html', {'message': "Please fill in both fields"})
+    
+    if len(Anime.objects.filter(name__iexact=request.POST['english_name']) | Anime.objects.filter(name_secondary__iexact=request.POST['japanese_name'])) > 0:
+        return render(request, 'anime/add.html', {'message': "What you tried to add seems to already exist"})
+    
+    a = Anime()
+    a.name = request.POST['english_name']
+    a.name_secondary = request.POST['japanese_name']
+    a.save()
+
+    request.session['message'] = "Added anime %s/%s" % (a.name, a.name_secondary)
+    return redirect('/anime')

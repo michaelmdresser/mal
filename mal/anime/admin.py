@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import Media, Rating, User
+from .models import Anime, Rating
 
-admin.site.register(Media)
+admin.site.register(Anime)
 admin.site.register(Rating)
-admin.site.register(User)
