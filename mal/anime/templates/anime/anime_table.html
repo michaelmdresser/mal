@@ -9,15 +9,15 @@
         <th>Name</th>
         <th>Japanese Name</th>
         {% for user in user_list %}
-            <th>{{ user.name }}</th>
+            <th>{{ user.userprofile.chosen_name }}</th>
         {% endfor %}
         <th>Avg</th>
         <th>Median</th>
     </tr>
     {% for anime in anime_list %}
     <tr>
-        <td>{{ anime.name }}</td>
-        <td>{{ anime.name_secondary }}</td>
+        <td><a href="/anime/{{ anime.id }}">{{ anime.name }}</a></td>
+        <td><a href="/anime/{{ anime.id }}">{{ anime.name_secondary }}</a></td>
         {% for user in user_list %}
             {% get_user_rating_for_anime user anime as rating %}
             <td>{{ rating }}</td>

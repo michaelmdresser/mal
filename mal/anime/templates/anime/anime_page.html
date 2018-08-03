@@ -1,0 +1,18 @@
+<h1>{{ anime.name }} / {{ anime.name_secondary }}</h1>
+
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+<h4>Rate this anime</h4>
+
+<form action="/anime/rate/" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="anime_id" id="anime_id" value="{{ anime.id }}" />
+    {% if rating %}
+    <input type="text" name="rating" id="rating" placeholder="{{ rating.value }}"/>
+    {% else %}
+    <input type="text" name="rating" id="rating" placeholder="Rating" />
+    {% endif %}
+    <input type="submit" value="Rate" />
+
+</form>
+<a href="/anime/">Anime list</a>
