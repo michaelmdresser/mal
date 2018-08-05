@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load tags %}
+
+{% block content %}
+
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+<h2>Group: {{ usergroup.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add</button>
+</form>
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ usergroup.name }}</h1>
+
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+<h3>Users</h3>
+<ul>
+{% for user in usergroup.users %}
+<li>{{ user.userprofile.chosen_name }}</li>
+{% endfor %}
+</ul>
+
+{% endblock content %}

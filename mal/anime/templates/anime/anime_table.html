@@ -5,7 +5,8 @@
 
 {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
 
-<table>
+<table id="animeTable" class="tablesorter">
+    <thead>
     <tr>
         <th>Name</th>
         <th>Japanese Name</th>
@@ -16,6 +17,8 @@
         <th>Avg</th>
         <th>Median</th>
     </tr>
+    </thead>
+    <tbody>
     {% for anime in anime_list %}
     <tr>
         <td><a href="/anime/{{ anime.id }}">{{ anime.name }}</a></td>
@@ -31,6 +34,7 @@
         <td>{{ median }}</td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
 
 {% endblock content %}

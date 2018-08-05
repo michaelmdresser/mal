@@ -16,3 +16,9 @@ class ProfileUpdateForm(forms.Form):
 class AddAnimeForm(forms.Form):
     english_name = forms.CharField(max_length=200)
     japanese_name = forms.CharField(max_length=200)
+
+class CreateGroupForm(forms.Form):
+    group_name = forms.CharField(max_length=255)
+
+class AddToGroupForm(forms.Form):
+    username = forms.CharField()

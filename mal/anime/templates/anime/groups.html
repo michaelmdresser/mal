@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load tags %}
+
+{% block content %}
+
+<h2>Your groups</h2>
+
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+{% if current_usergroup %}<h3>Selected group: {{ current_usergroup.name }}</h3>
+
+{% for usergroup in user.usergroups %}
+<p><a href="/anime/{{ usergroup.id }}">{{ usergroup.name }}</a></p>
+{% endfor %}
+
+{% endblock content %}

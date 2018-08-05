@@ -7,8 +7,8 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import login, authenticate
 from django.utils.text import slugify
-from anime.forms import SignUpForm, ProfileUpdateForm, AddAnimeForm
-from anime.models import UserProfile, Rating, Anime
+from anime.forms import SignUpForm, ProfileUpdateForm, AddAnimeForm, CreateGroupForm, AddToGroupForm
+from anime.models import UserProfile, Rating, Anime, UserGroup
 
 import os
 
@@ -56,6 +56,50 @@ def profile(request):
     return render(request, 'anime/profile.html', {'user': request.user, 'message': message, 'form': form})
 
 @login_required
+def usergroups(request):
+    message = request.session.pop('message', None)
+    current_usergroup = request.session.get('current_usergroup', None)
+
+    return render(request, 'anime/usergroups.html', {
+        'user': request.user,
+        'current_usergroup': current_usergroup,
+        'message': message,
+    })
+
+@login_required
+def create_usergroup(request):
+    message = request.session.pop('message', None)
+
+    if request.method == 'POST':
+        form = CreateGroupForm(request.POST)
+        if form.is_valid():
+            ug = UserGroup(name=form.cleaned_data.get('group_name'))
+            ug.users.add(request.user)
+            ug.save()
+
+            request.session['current_usergroup'] = ug
+            request.session['message'] = "Group %s created" % ug.name
+            return redirect('/anime/groups')
+    else:
+        form = CreateGroupForm
+    
+    return render(request, 'anime/create_usergroup.html', {'form': form})
+
+@login_required
+def usergroup_page(request, group_id):
+    usergroup = get_object_or_404(UserGroup, pk=group_id)
+    user = request.user
+
+    matching_user = UserGroup.objects.filter(users__id=user.id)
+    if len(matching_user) > 0:
+        request.session['message'] = "You do not belong to this group"
+        return redirect('/anime')
+
+    message = request.session.pop('message', None)
+
+            
+
+@login_required
 def anime_list(request):
     anime_list = Anime.objects.all()
     user_list = User.objects.all().exclude(pk=request.user.id)
@@ -95,6 +139,10 @@ def add(request):
             a.name = form.cleaned_data.get('english_name')
             a.name_secondary = form.cleaned_data.get('japanese_name')
             a.clean_full_name = slugify(a.name.lower() + '/' + a.name_secondary.lower())
+
+            if len(Anime.objects.filter(clean_full_name=a.clean_full_name)) > 0:
+                return render(request, 'anime/add.html', {'message': "What you tried to add seems to already exist"})
+
             a.save()
             request.session['message'] = "Added anime %s/%s" % (a.name, a.name_secondary)
             return redirect('/anime')
@@ -102,24 +150,6 @@ def add(request):
         form = AddAnimeForm()
     
     return render(request, 'anime/add.html', {'form': form})
-
-    # if len(request.POST) == 0:
-    #     return render(request, 'anime/add.html')
-    
-    # if len(request.POST['english_name']) == 0 or len(request.POST['japanese_name']) == 0:
-    #     return render(request, 'anime/add.html', {'message': "Please fill in both fields"})
-    
-    # if len(Anime.objects.filter(name__iexact=request.POST['english_name']) | Anime.objects.filter(name_secondary__iexact=request.POST['japanese_name'])) > 0:
-    #     return render(request, 'anime/add.html', {'message': "What you tried to add seems to already exist"})
-    
-    # a = Anime()
-    # a.name = request.POST['english_name']
-    # a.name_secondary = request.POST['japanese_name']
-    # a.clean_full_name = slugify(request.POST['english_name'].lower() + '/' + request.POST['japanese_name'].lower())
-    # a.save()
-
-    # request.session['message'] = "Added anime %s/%s" % (a.name, a.name_secondary)
-    # return redirect('/anime')
 
 @login_required
 def rate(request):

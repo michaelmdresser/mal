@@ -31,3 +31,10 @@ class UserProfile(models.Model):
         ordering = ['user']
         verbose_name = 'user'
         verbose_name_plural = 'users'
+
+class UserGroup(models.Model):
+    name = models.CharField(blank=False, max_length=255)
+    users = models.ManyToManyField(User)
+
+    class Meta:
+        ordering = ('name',)
