@@ -15,12 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
+from anime import views as anime_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('login/', auth_views.login, name='login', kwargs={'redirect_authenticated_user': True}),
+    path('logout/', auth_views.logout, {'next_page': 'login'}, name='logout'),
+    path('signup/', anime_views.signup, name='signup'),
+    path('profile/', anime_views.profile, name='profile'),
+
+    path('', include('django.contrib.auth.urls')),
+    # path('password_reset/', auth_views.password_reset, name='password_reset'),
+    # path('password_reset/done/', auth_views.password_reset_done, name='password_reset_done'),
+    # path('password_change/', auth_views.password_change, name='password_change'),
     path('anime/', include('anime.urls')),
+    path('', RedirectView.as_view(url='login', permanent=False))
    # path('', include('anime.urls')),
     # path('login/', auth_views.login, name='login'),
     # path('logout/', auth_views.logout, name='logout'),
