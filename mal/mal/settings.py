@@ -125,4 +125,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/anime/anime_list'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/anime/'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # TODO: for dev only

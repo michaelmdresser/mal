@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
+{% load tags %}
 
 {% block content %}
 
-<h1>Add an anime</h1>
-
 {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+<h2>Username: {{ user.username }}</h2>
+<h2>Email: {{ user.email }}</h2>
+<h2>Display Name: {{ user.userprofile.chosen_name }}</h2>
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Add</button>
+    <button type="submit">Update</button>
 </form>
 
 {% endblock content %}

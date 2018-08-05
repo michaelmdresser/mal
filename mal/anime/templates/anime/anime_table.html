@@ -1,13 +1,15 @@
+{% extends 'base.html' %}
 {% load tags %}
 
-{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+{% block content %}
 
-<a href="/anime/add">Add an anime</a>
+{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
 
 <table>
     <tr>
         <th>Name</th>
         <th>Japanese Name</th>
+        <th>{{ user.userprofile.chosen_name }}</th>
         {% for user in user_list %}
             <th>{{ user.userprofile.chosen_name }}</th>
         {% endfor %}
@@ -18,6 +20,7 @@
     <tr>
         <td><a href="/anime/{{ anime.id }}">{{ anime.name }}</a></td>
         <td><a href="/anime/{{ anime.id }}">{{ anime.name_secondary }}</a></td>
+        <td>{% get_user_rating_for_anime user anime as rating %}{{ rating }}</td>
         {% for user in user_list %}
             {% get_user_rating_for_anime user anime as rating %}
             <td>{{ rating }}</td>
@@ -29,3 +32,5 @@
     </tr>
     {% endfor %}
 </table>
+
+{% endblock content %}
