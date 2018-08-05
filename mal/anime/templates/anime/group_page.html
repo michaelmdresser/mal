@@ -4,11 +4,14 @@
 
 <h1>{{ usergroup.name }}</h1>
 
-{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Set Active" name="activate_button"/>
+</form>
 
 <h3>Users</h3>
 <ul>
-{% for user in usergroup.users %}
+{% for user in usergroup_users %}
 <li>{{ user.userprofile.chosen_name }}</li>
 {% endfor %}
 </ul>

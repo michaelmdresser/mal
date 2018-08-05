@@ -5,12 +5,12 @@
 
 <h2>Your groups</h2>
 
-{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+{% if current_usergroup %}<h3>Selected group: {{ current_usergroup.name }}</h3>{% endif %}
 
-{% if current_usergroup %}<h3>Selected group: {{ current_usergroup.name }}</h3>
-
-{% for usergroup in user.usergroups %}
-<p><a href="/anime/{{ usergroup.id }}">{{ usergroup.name }}</a></p>
+{% for usergroup in usergroup_set %}
+<p><a href="/anime/groups/{{ usergroup.id }}">{{ usergroup.name }}</a></p>
 {% endfor %}
+
+<p><a href="/anime/create_group/">Create a group</a></p>
 
 {% endblock content %}

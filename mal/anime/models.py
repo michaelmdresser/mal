@@ -36,5 +36,8 @@ class UserGroup(models.Model):
     name = models.CharField(blank=False, max_length=255)
     users = models.ManyToManyField(User)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ('name',)

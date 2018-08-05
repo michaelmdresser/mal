@@ -17,6 +17,9 @@ class AddAnimeForm(forms.Form):
     english_name = forms.CharField(max_length=200)
     japanese_name = forms.CharField(max_length=200)
 
+class RateAnimeForm(forms.Form):
+    rating = forms.IntegerField(max_value=10, min_value=0)
+
 class CreateGroupForm(forms.Form):
     group_name = forms.CharField(max_length=255)
 

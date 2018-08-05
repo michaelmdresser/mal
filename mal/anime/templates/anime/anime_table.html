@@ -1,16 +1,31 @@
 {% extends 'base.html' %}
 {% load tags %}
+{% load static %}
 
 {% block content %}
 
-{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+{% if current_usergroup %}
+<h4>Current Group: {{ current_usergroup.name }}</h4>
+{% endif %}
+
+<script>
+    $(document).ready(function()
+    {
+        $("#animeTable").tablesorter( {sortList: [[0,0], [1, 0]]} );
+    }
+)
+</script>
 
 <table id="animeTable" class="tablesorter">
     <thead>
     <tr>
         <th>Name</th>
         <th>Japanese Name</th>
+        {% if user.userprofile.chosen_name %}
         <th>{{ user.userprofile.chosen_name }}</th>
+        {% else %}
+        <th>{{ user.username }}</th>
+        {% endif %}
         {% for user in user_list %}
             <th>{{ user.userprofile.chosen_name }}</th>
         {% endfor %}

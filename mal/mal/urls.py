@@ -21,8 +21,8 @@ from anime import views as anime_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', auth_views.login, name='login', kwargs={'redirect_authenticated_user': True}),
-    path('logout/', auth_views.logout, {'next_page': 'login'}, name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html', redirect_authenticated_user=True), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('signup/', anime_views.signup, name='signup'),
     path('profile/', anime_views.profile, name='profile'),
 
