@@ -79,14 +79,14 @@ def create_usergroup(request):
             ug.save()
             ug.users.add(request.user)
             ug.save()
-
+            
             request.session['current_usergroup_id'] = ug.id
             messages.success(request, "Created group \"%s\"" % ug.name)
             return redirect('/anime/groups')
     else:
         form = CreateGroupForm()
     
-    return render(request, 'anime/create_group.html', {'form': form, 'message': message})
+    return render(request, 'anime/create_group.html', {'form': form})
 
 @login_required
 def add_to_usergroup(request):
@@ -157,15 +157,16 @@ def anime_list(request):
         current_usergroup = None
 
     if current_usergroup:
-        user_list = current_usergroup.users.exclude(pk=request.user.id)
+        usergroup_ratings = Rating.objects.filter(user__id__in=current_usergroup.users.values('id'))
+        anime_list = Anime.objects.filter(id__in=usergroup_ratings.values('anime__id'))
     else:
-        user_list = None
+        anime_list = Anime.objects.filter(id__in=Rating.objects.get(user=request.user).values('anime__id'))
 
     user = request.user
 
     return render(request, 'anime/anime_table.html', {
         'anime_list': anime_list,
-        'user_list': user_list,
+        'user_list': current_usergroup.users.all(),
         'user': user,
         'current_usergroup': current_usergroup,
     })
@@ -222,12 +223,15 @@ def add(request):
             a.name_secondary = form.cleaned_data.get('japanese_name')
             a.clean_full_name = slugify(a.name.lower() + '/' + a.name_secondary.lower())
 
-            if len(Anime.objects.filter(clean_full_name=a.clean_full_name)) > 0:
-                return render(request, 'anime/add.html', {'message': "What you tried to add seems to already exist"})
+            try:
+                existing = Anime.objects.get(clean_full_name=a.clean_full_name)
+                return redirect('/anime/%s' % existing.id)
+            except Anime.DoesNotExist:
+                pass
 
             a.save()
             request.session['message'] = "Added anime %s/%s" % (a.name, a.name_secondary)
-            return redirect('/anime')
+            return redirect('/anime/%s' % a.id)
     else:
         form = AddAnimeForm()
     
